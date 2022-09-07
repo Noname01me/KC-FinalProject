@@ -1,18 +1,56 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class player : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Rigidbody2D _ridgidbody;
+    private Vector2 _input;
+
+    public float Speed;
+    public GameObject BulletPrefab;
+    public Transform GunPoint;
+
     void Start()
     {
-        
+        _ridgidbody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        
+        _input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+        transform.up = (mouceUtis.GetMoucePosition2d() - (Vector2)transform.position).normalized;
+
+        _ridgidbody.velocity = _input.normalized * Speed;
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Shoot();
+
+        }
+    }
+
+    private void Shoot()
+    {
+        Instantiate(BulletPrefab, GunPoint.position, transform.rotation);
+
+    }
+
+
+    public void Die()
+    {
+        Destroy(gameObject);
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        var enemy = other.collider.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            Die();
+
+        }
     }
 }
